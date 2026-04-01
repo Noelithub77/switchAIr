@@ -5,11 +5,11 @@
 <h1 align="center">switchAir</h1>
 
 <p align="center">
-  <strong>🚀 Professional multi-account manager for Google Gemini & Claude AI</strong>
+  <strong>Professional multi-account manager for Google Gemini and Claude AI</strong>
 </p>
 
 <p align="center">
-  English | <a href="README.zh-CN.md">简体中文</a>
+  English
 </p>
 
 <p align="center">
@@ -42,46 +42,46 @@
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 
-- [Why switchAir?](#-why-switchair)
-- [Features](#-features)
-- [Screenshots](#-screenshots)
-- [Quick Start](#-quick-start)
-- [Tech Stack](#️-tech-stack)
-- [Development](#-development)
-- [FAQ](#-faq)
-- [Contributing](#-contributing)
-- [License](#-license)
-
----
-
-## ✨ Why switchAir?
-
-When using Antigravity IDE, have you ever encountered these problems?
-
-- 😫 Single account quota runs out quickly, requiring frequent manual switching
-- 🔄 Managing multiple Google/Claude accounts is cumbersome
-- 📊 Don't know how much quota is left on the current account
-- ⏰ Worried about missing quota reset times
-- 🔌 Need a reliable local API proxy for development tools
-
-**switchAir** is here to solve these problems! It's a professional Electron desktop app that helps you:
-
-- ✅ **Unlimited Account Pool** - Add any number of Google Gemini / Claude accounts
-- ✅ **Smart Auto-Switching** - Automatically switch to the next available account when quota is low or rate-limited
-- ✅ **Real-time Monitoring** - Visualize quota usage for all accounts
-- ✅ **Local API Proxy** - Built-in OpenAI/Anthropic compatible proxy server
-- ✅ **Secure Encryption** - AES-256-GCM encryption for sensitive data
+- [Why switchAir](#why-switchair)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Quick Start](#quick-start)
+- [Tech Stack](#tech-stack)
+- [Development](#development)
+- [FAQ](#faq)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## 🎯 Features
+## Why switchAir
+
+When using Antigravity IDE, you may encounter the following issues:
+
+- Single-account quotas are exhausted quickly, requiring frequent manual switching
+- Managing multiple Google and Claude accounts is cumbersome
+- Available quota for the current account is difficult to track
+- Quota reset times are easy to miss
+- A reliable local API proxy is needed for development tools
+
+**switchAir** addresses these requirements with a desktop Electron application that provides:
+
+- Unlimited account pools for Google Gemini and Claude accounts
+- Automatic switching when quota is low or rate-limited
+- Real-time quota monitoring across all accounts
+- A local API proxy compatible with OpenAI and Anthropic clients
+- AES-256-GCM encryption for sensitive data
+
+---
+
+## Features
 
 <table>
   <tr>
     <td width="50%">
-      <h3>☁️ Cloud Account Pool</h3>
+      <h3>Cloud Account Pool</h3>
       <ul>
         <li>Add unlimited Google Gemini / Claude accounts via OAuth</li>
         <li>Display avatar, email, status, and last used time</li>
@@ -89,7 +89,7 @@ When using Antigravity IDE, have you ever encountered these problems?
       </ul>
     </td>
     <td width="50%">
-      <h3>📊 Real-time Quota Monitoring</h3>
+      <h3>Real-time Quota Monitoring</h3>
       <ul>
         <li>Multi-model support: gemini-pro, claude-3-5-sonnet, etc.</li>
         <li>Visual progress bars with color indicators</li>
@@ -99,7 +99,7 @@ When using Antigravity IDE, have you ever encountered these problems?
   </tr>
   <tr>
     <td width="50%">
-      <h3>🔄 Intelligent Auto-Switching</h3>
+      <h3>Intelligent Auto-Switching</h3>
       <ul>
         <li>Unlimited pool mode with smart backup selection</li>
         <li>Auto-switch when quota < 5% or rate-limited</li>
@@ -107,7 +107,7 @@ When using Antigravity IDE, have you ever encountered these problems?
       </ul>
     </td>
     <td width="50%">
-      <h3>🔐 Security First</h3>
+      <h3>Security First</h3>
       <ul>
         <li>AES-256-GCM encryption for sensitive data</li>
         <li>OS native credential manager integration</li>
@@ -117,7 +117,7 @@ When using Antigravity IDE, have you ever encountered these problems?
   </tr>
   <tr>
     <td width="50%">
-      <h3>💾 Account Backup</h3>
+      <h3>Account Backup</h3>
       <ul>
         <li>Capture snapshots of account state</li>
         <li>Fast switching between saved accounts</li>
@@ -125,7 +125,7 @@ When using Antigravity IDE, have you ever encountered these problems?
       </ul>
     </td>
     <td width="50%">
-      <h3>⚙️ Process Control</h3>
+      <h3>Process Control</h3>
       <ul>
         <li>Auto-detect if Antigravity is running</li>
         <li>Launch via URI protocol or executable</li>
@@ -135,7 +135,7 @@ When using Antigravity IDE, have you ever encountered these problems?
   </tr>
   <tr>
     <td width="50%">
-      <h3>🔌 Local API Proxy</h3>
+      <h3>Local API Proxy</h3>
       <ul>
         <li>OpenAI & Anthropic API compatible</li>
         <li>Configurable port and request timeout</li>
@@ -143,7 +143,7 @@ When using Antigravity IDE, have you ever encountered these problems?
       </ul>
     </td>
     <td width="50%">
-      <h3>🛠️ Developer Tools</h3>
+      <h3>Developer Tools</h3>
       <ul>
         <li>Built-in cURL & Python code generation</li>
         <li>Visual service status monitoring</li>
@@ -155,15 +155,14 @@ When using Antigravity IDE, have you ever encountered these problems?
 
 ### Additional Features
 
-- **🖥️ System Tray** - Background mode with tray icon and right-click menu
-- **🔗 IDE Sync** - Automatically scan and import accounts from IDE's `state.vscdb`
-- **📦 Batch Operations** - Batch refresh and delete multiple accounts
-- **🌏 Internationalization** - Multi-language support (English / 中文)
-- **🎨 Modern UI** - Built with React, TailwindCSS, and Shadcn UI
+- System tray support with background operation and context menu
+- IDE synchronization that scans and imports accounts from `state.vscdb`
+- Batch refresh and deletion for multiple accounts
+- Modern UI built with React, Tailwind CSS, and Shadcn UI
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <p align="center">
   <img src="docs/assets/screenshot-main.png" alt="Main Interface" width="80%" />
@@ -177,7 +176,7 @@ When using Antigravity IDE, have you ever encountered these problems?
 
 ---
 
-## � Quick Start
+## Quick Start
 
 ### Download
 
@@ -215,7 +214,7 @@ npm run make
 
 ---
 
-## �🛠️ Tech Stack
+## Tech Stack
 
 | Category | Technologies |
 |----------|-------------|
@@ -228,7 +227,7 @@ npm run make
 
 ---
 
-## � Development
+## Development
 
 ### Available Scripts
 
@@ -259,7 +258,7 @@ switchAir/
 
 ---
 
-## ❓ FAQ
+## FAQ
 
 <details>
 <summary><b>Q: The app won't start?</b></summary>
@@ -307,7 +306,7 @@ Please submit issues or suggestions via [GitHub Issues](https://github.com/Noeli
 
 ---
 
-## 🌟 Star History
+## Star History
 
 <a href="https://github.com/Noelithub77/switchAir/stargazers">
   <picture>
@@ -319,7 +318,7 @@ Please submit issues or suggestions via [GitHub Issues](https://github.com/Noeli
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
@@ -327,13 +326,13 @@ We follow the [Contributor Covenant](CODE_OF_CONDUCT.md) Code of Conduct.
 
 ---
 
-## 📄 License
+## License
 
 [CC BY-NC-SA 4.0](LICENSE)
 
 ---
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 > [!WARNING]
 > **For Educational Purposes Only**
