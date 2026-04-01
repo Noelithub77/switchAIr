@@ -1,15 +1,19 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
+import { parse as parseJsonc } from 'comment-json';
 import { v4 as uuidv4 } from 'uuid';
 import { desc, eq } from 'drizzle-orm';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { getCloudAccountsDbPath, getAntigravityDbPaths } from '../../utils/paths';
 import { logger } from '../../utils/logger';
-import { CloudAccount } from '../../types/cloudAccount';
+import {
+  CloudAccount,
+  type CloudQuotaData,
+  type CloudTokenData,
+} from '../../types/cloudAccount';
 import { type DeviceProfile, type DeviceProfileVersion } from '../../types/account';
 import { ItemTableValueRowSchema, TableInfoRowSchema } from '../../types/db';
-import { decryptWithMigration, encrypt, type KeySource } from '../../utils/security';
 import { ProtobufUtils } from '../../utils/protobuf';
 import { GoogleAPIService } from '../../services/GoogleAPIService';
 import { getAntigravityVersion, isNewVersion } from '../../utils/antigravityVersion';
@@ -23,6 +27,8 @@ const SQLITE_BUSY_TIMEOUT_MS = 3000;
 const SQLITE_RETRY_DELAY_MS = 150;
 const SQLITE_MAX_RETRIES = 3;
 const DEVICE_PAYLOAD_SCHEMA_VERSION = 1;
+const loggedUnreadableCloudFields = new Set<string>();
+const loggedSkippedCloudAccounts = new Set<string>();
 
 type DrizzleExecutor = Pick<
   BetterSQLite3Database<typeof drizzleSchema>,
@@ -144,14 +150,6 @@ function getIdeDb(
     { readonly: readOnly },
     { readOnly, busyTimeoutMs: SQLITE_BUSY_TIMEOUT_MS },
   );
-}
-
-interface MigrationStats {
-  totalFields: number;
-  fallbackUsedFields: number;
-  migratedFields: number;
-  migratedBySource: Record<KeySource, number>;
-  failedFields: number;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -344,58 +342,40 @@ function parseDeviceHistoryColumn(
   return normalized;
 }
 
-function createMigrationStats(): MigrationStats {
-  return {
-    totalFields: 0,
-    fallbackUsedFields: 0,
-    migratedFields: 0,
-    migratedBySource: {
-      safeStorage: 0,
-      keytar: 0,
-      file: 0,
-    },
-    failedFields: 0,
-  };
+function serializePlainJson(value: unknown): string {
+  return JSON.stringify(value, null, 2);
 }
 
-async function decryptAndMigrateField(
-  orm: DrizzleExecutor,
+interface ReadStoredJsonFieldResult<T> {
+  value: T | null;
+}
+
+async function readStoredJsonField<T extends object>(
   accountId: string,
   field: 'tokenJson' | 'quotaJson',
   value: string | null,
-): Promise<{ value: string | null; migrated: boolean; usedFallback?: KeySource }> {
+): Promise<ReadStoredJsonFieldResult<T>> {
   if (!value) {
-    return { value: null, migrated: false };
+    return { value: null };
   }
 
-  const result = await decryptWithMigration(value);
-  if (result.reencrypted) {
-    if (field === 'tokenJson') {
-      orm
-        .update(accounts)
-        .set({ tokenJson: result.reencrypted })
-        .where(eq(accounts.id, accountId))
-        .run();
-    } else {
-      orm
-        .update(accounts)
-        .set({ quotaJson: result.reencrypted })
-        .where(eq(accounts.id, accountId))
-        .run();
+  try {
+    const parsed = parseJsonc(value, undefined, true);
+    if (!isRecord(parsed)) {
+      throw new Error('stored account field is not an object');
     }
-    logger.info(
-      `Migrated ${field} for account ${accountId} from ${result.usedFallback ?? 'unknown'} key`,
-    );
+    return { value: parsed as unknown as T };
+  } catch (error) {
+    const logKey = `${accountId}:${field}`;
+    if (!loggedUnreadableCloudFields.has(logKey)) {
+      loggedUnreadableCloudFields.add(logKey);
+      logger.warn(`Failed to read ${field} for account ${accountId}; skipping unreadable value`, {
+        error,
+      });
+    }
+    return { value: null };
   }
-
-  return {
-    value: result.value,
-    migrated: Boolean(result.reencrypted),
-    usedFallback: result.usedFallback,
-  };
 }
-
-type DecryptFieldResult = Awaited<ReturnType<typeof decryptAndMigrateField>>;
 
 export class CloudAccountRepo {
   private static versionFailureLogged = false;
@@ -403,10 +383,10 @@ export class CloudAccountRepo {
   static async init(): Promise<void> {
     const dbPath = getCloudAccountsDbPath();
     ensureDatabaseInitialized(dbPath);
-    await this.migrateToEncrypted();
+    await this.migrateToPlainJson();
   }
 
-  static async migrateToEncrypted(): Promise<void> {
+  static async migrateToPlainJson(): Promise<void> {
     const { raw, orm } = getCloudDb();
     try {
       const rows = orm
@@ -419,31 +399,26 @@ export class CloudAccountRepo {
         .all();
 
       for (const row of rows) {
-        let changed = false;
-        let newToken = row.tokenJson;
-        let newQuota = row.quotaJson;
-
-        // Check if plain text (starts with {)
-        if (newToken && newToken.startsWith('{')) {
-          newToken = await encrypt(newToken);
-          changed = true;
+        const tokenValue = await readStoredJsonField<CloudTokenData>(row.id, 'tokenJson', row.tokenJson);
+        if (!tokenValue.value) {
+          continue;
         }
-        if (newQuota && newQuota.startsWith('{')) {
-          newQuota = await encrypt(newQuota);
-          changed = true;
-        }
-
-        if (changed) {
-          orm
-            .update(accounts)
-            .set({ tokenJson: newToken, quotaJson: newQuota })
-            .where(eq(accounts.id, row.id))
-            .run();
-          logger.info(`Migrated account ${row.id} to encrypted storage`);
-        }
+        const quotaValue = await readStoredJsonField<CloudQuotaData>(
+          row.id,
+          'quotaJson',
+          row.quotaJson,
+        );
+        orm
+          .update(accounts)
+          .set({
+            tokenJson: serializePlainJson(tokenValue.value),
+            quotaJson: quotaValue.value ? serializePlainJson(quotaValue.value) : null,
+          })
+          .where(eq(accounts.id, row.id))
+          .run();
       }
     } catch (e) {
-      logger.error('Failed to migrate data', e);
+      logger.error('Failed to migrate cloud account storage to plain JSON', e);
     } finally {
       raw.close();
     }
@@ -452,16 +427,14 @@ export class CloudAccountRepo {
   static async addAccount(account: CloudAccount): Promise<void> {
     const { raw, orm } = getCloudDb();
     try {
-      const tokenEncrypted = await encrypt(JSON.stringify(account.token));
-      const quotaEncrypted = account.quota ? await encrypt(JSON.stringify(account.quota)) : null;
       const values = {
         id: account.id,
         provider: account.provider,
         email: account.email,
         name: account.name ?? null,
         avatarUrl: account.avatar_url ?? null,
-        tokenJson: tokenEncrypted,
-        quotaJson: quotaEncrypted,
+        tokenJson: serializePlainJson(account.token),
+        quotaJson: account.quota ? serializePlainJson(account.quota) : null,
         deviceProfileJson: serializeDeviceProfile(account.device_profile),
         deviceHistoryJson: serializeDeviceHistory(account.device_history),
         createdAt: account.created_at,
@@ -495,7 +468,6 @@ export class CloudAccountRepo {
 
   static async getAccounts(): Promise<CloudAccount[]> {
     const { raw, orm } = getCloudDb();
-    const migrationStats = createMigrationStats();
 
     try {
       const rows = orm.select().from(accounts).orderBy(desc(accounts.lastUsed)).all();
@@ -509,63 +481,26 @@ export class CloudAccountRepo {
 
       const cloudAccounts: CloudAccount[] = [];
       for (const normalizedRow of rows) {
-        let tokenResult: DecryptFieldResult;
-        try {
-          tokenResult = await decryptAndMigrateField(
-            orm,
-            normalizedRow.id,
-            'tokenJson',
-            normalizedRow.tokenJson,
-          );
-        } catch (error) {
-          migrationStats.failedFields += 1;
-          logger.error(`Failed to decrypt token for account ${normalizedRow.id}`, error);
-          throw error;
-        }
-
-        let quotaResult: DecryptFieldResult;
-        try {
-          quotaResult = await decryptAndMigrateField(
-            orm,
-            normalizedRow.id,
-            'quotaJson',
-            normalizedRow.quotaJson,
-          );
-        } catch (error) {
-          migrationStats.failedFields += 1;
-          logger.error(`Failed to decrypt quota for account ${normalizedRow.id}`, error);
-          throw error;
-        }
-
+        const tokenResult = await readStoredJsonField<CloudTokenData>(
+          normalizedRow.id,
+          'tokenJson',
+          normalizedRow.tokenJson,
+        );
         if (!tokenResult.value) {
-          throw new Error(`Missing token data for account ${normalizedRow.id}`);
+          if (!loggedSkippedCloudAccounts.has(normalizedRow.id)) {
+            loggedSkippedCloudAccounts.add(normalizedRow.id);
+            logger.warn(
+              `Skipping cloud account ${normalizedRow.id} because token data is unreadable`,
+            );
+          }
+          continue;
         }
 
-        if (tokenResult.value) {
-          migrationStats.totalFields += 1;
-        }
-        if (tokenResult.usedFallback) {
-          migrationStats.fallbackUsedFields += 1;
-        }
-        if (tokenResult.migrated) {
-          migrationStats.migratedFields += 1;
-          if (tokenResult.usedFallback) {
-            migrationStats.migratedBySource[tokenResult.usedFallback] += 1;
-          }
-        }
-
-        if (quotaResult.value) {
-          migrationStats.totalFields += 1;
-        }
-        if (quotaResult.usedFallback) {
-          migrationStats.fallbackUsedFields += 1;
-        }
-        if (quotaResult.migrated) {
-          migrationStats.migratedFields += 1;
-          if (quotaResult.usedFallback) {
-            migrationStats.migratedBySource[quotaResult.usedFallback] += 1;
-          }
-        }
+        const quotaResult = await readStoredJsonField<CloudQuotaData>(
+          normalizedRow.id,
+          'quotaJson',
+          normalizedRow.quotaJson,
+        );
 
         cloudAccounts.push({
           id: normalizedRow.id,
@@ -573,8 +508,8 @@ export class CloudAccountRepo {
           email: normalizedRow.email,
           name: normalizedRow.name ?? undefined,
           avatar_url: normalizedRow.avatarUrl ?? undefined,
-          token: JSON.parse(tokenResult.value),
-          quota: quotaResult.value ? JSON.parse(quotaResult.value) : undefined,
+          token: tokenResult.value,
+          quota: quotaResult.value ?? undefined,
           device_profile: parseDeviceProfileColumn(normalizedRow.deviceProfileJson),
           device_history: parseDeviceHistoryColumn(normalizedRow.deviceHistoryJson),
           created_at: normalizedRow.createdAt,
@@ -586,24 +521,6 @@ export class CloudAccountRepo {
 
       return cloudAccounts;
     } finally {
-      if (
-        migrationStats.migratedFields > 0 ||
-        migrationStats.fallbackUsedFields > 0 ||
-        migrationStats.failedFields > 0
-      ) {
-        const summary = {
-          totalFields: migrationStats.totalFields,
-          fallbackUsedFields: migrationStats.fallbackUsedFields,
-          migratedFields: migrationStats.migratedFields,
-          migratedBySource: migrationStats.migratedBySource,
-          failedFields: migrationStats.failedFields,
-        };
-        if (migrationStats.failedFields > 0) {
-          logger.warn('CloudAccountRepo migration summary (with failures)', summary);
-        } else {
-          logger.info('CloudAccountRepo migration summary', summary);
-        }
-      }
       raw.close();
     }
   }
@@ -618,21 +535,19 @@ export class CloudAccountRepo {
         return undefined;
       }
 
-      const tokenResult = await decryptAndMigrateField(
-        orm,
+      const tokenResult = await readStoredJsonField<CloudTokenData>(
         normalizedRow.id,
         'tokenJson',
         normalizedRow.tokenJson,
       );
-      const quotaResult = await decryptAndMigrateField(
-        orm,
+      const quotaResult = await readStoredJsonField<CloudQuotaData>(
         normalizedRow.id,
         'quotaJson',
         normalizedRow.quotaJson,
       );
 
       if (!tokenResult.value) {
-        throw new Error(`Missing token data for account ${normalizedRow.id}`);
+        throw new Error(`Unable to read token data for account ${normalizedRow.id}`);
       }
 
       return {
@@ -641,8 +556,8 @@ export class CloudAccountRepo {
         email: normalizedRow.email,
         name: normalizedRow.name ?? undefined,
         avatar_url: normalizedRow.avatarUrl ?? undefined,
-        token: JSON.parse(tokenResult.value),
-        quota: quotaResult.value ? JSON.parse(quotaResult.value) : undefined,
+        token: tokenResult.value,
+        quota: quotaResult.value ?? undefined,
         device_profile: parseDeviceProfileColumn(normalizedRow.deviceProfileJson),
         device_history: parseDeviceHistoryColumn(normalizedRow.deviceHistoryJson),
         created_at: normalizedRow.createdAt,
@@ -669,8 +584,11 @@ export class CloudAccountRepo {
     const { raw, orm } = getCloudDb();
 
     try {
-      const encrypted = await encrypt(JSON.stringify(token));
-      orm.update(accounts).set({ tokenJson: encrypted }).where(eq(accounts.id, id)).run();
+      orm
+        .update(accounts)
+        .set({ tokenJson: serializePlainJson(token) })
+        .where(eq(accounts.id, id))
+        .run();
     } finally {
       raw.close();
     }
@@ -680,8 +598,11 @@ export class CloudAccountRepo {
     const { raw, orm } = getCloudDb();
 
     try {
-      const encrypted = await encrypt(JSON.stringify(quota));
-      orm.update(accounts).set({ quotaJson: encrypted }).where(eq(accounts.id, id)).run();
+      orm
+        .update(accounts)
+        .set({ quotaJson: serializePlainJson(quota) })
+        .where(eq(accounts.id, id))
+        .run();
     } finally {
       raw.close();
     }

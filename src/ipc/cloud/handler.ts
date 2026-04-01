@@ -97,7 +97,12 @@ export async function addGoogleAccount(authCode: string): Promise<CloudAccount> 
 }
 
 export async function listCloudAccounts(): Promise<CloudAccount[]> {
-  return CloudAccountRepo.getAccounts();
+  try {
+    return await CloudAccountRepo.getAccounts();
+  } catch (error) {
+    logger.error('Failed to list cloud accounts', error);
+    return [];
+  }
 }
 
 export async function deleteCloudAccount(accountId: string): Promise<void> {
