@@ -25,7 +25,7 @@ import { stringify as yamlStringify } from 'yaml';
 const nativeModules = ['better-sqlite3', 'keytar', 'bindings', 'file-uri-to-path'];
 const ResolvedMakerAppImage = MakerAppImage;
 const keepLanguages = new Set(['en', 'en-US', 'zh-CN', 'ru']);
-const windowsExecutableName = 'antigravity-manager';
+const windowsExecutableName = 'switchAir';
 
 const isStartCommand = process.argv.some((arg) => arg.includes('start'));
 
@@ -204,7 +204,7 @@ const config: ForgeConfig = {
     asar: {
       unpack: '**/{better-sqlite3,keytar}/**/*',
     },
-    name: 'Antigravity Manager',
+    name: 'switchAir',
     executableName: windowsExecutableName,
     icon: 'images/icon', // Electron Forge automatically adds .icns/.ico
     extraResource: ['src/assets'], // Copy assets folder to resources/assets
@@ -450,17 +450,17 @@ const config: ForgeConfig = {
     new MakerSquirrel({
       setupIcon: 'images/icon.ico',
       iconUrl:
-        'https://raw.githubusercontent.com/Draculabo/AntigravityManager/main/images/icon.ico',
+        'https://raw.githubusercontent.com/Noelithub77/switchAir/main/images/icon.ico',
     }),
     ...(process.platform === 'win32' && process.arch === 'x64'
       ? [
-          new MakerWix({
-            language: 1033,
-            icon: path.join(process.cwd(), 'images', 'icon.ico'),
-            exe: `${windowsExecutableName}.exe`,
-            ui: { chooseDirectory: true },
-          }),
-        ]
+        new MakerWix({
+          language: 1033,
+          icon: path.join(process.cwd(), 'images', 'icon.ico'),
+          exe: `${windowsExecutableName}.exe`,
+          ui: { chooseDirectory: true },
+        }),
+      ]
       : []),
     new MakerDMG(
       {
@@ -484,8 +484,8 @@ const config: ForgeConfig = {
       name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          owner: 'Draculabo',
-          name: 'AntigravityManager',
+          owner: 'Noelithub77',
+          name: 'switchAir',
         },
         draft: true,
         prerelease: false,
@@ -515,17 +515,17 @@ const config: ForgeConfig = {
     }),
     ...(!isStartCommand
       ? [
-          new AutoUnpackNativesPlugin({}),
-          new FusesPlugin({
-            version: FuseVersion.V1,
-            [FuseV1Options.RunAsNode]: false,
-            [FuseV1Options.EnableCookieEncryption]: true,
-            [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
-            [FuseV1Options.EnableNodeCliInspectArguments]: false,
-            [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
-            [FuseV1Options.OnlyLoadAppFromAsar]: true,
-          }),
-        ]
+        new AutoUnpackNativesPlugin({}),
+        new FusesPlugin({
+          version: FuseVersion.V1,
+          [FuseV1Options.RunAsNode]: false,
+          [FuseV1Options.EnableCookieEncryption]: true,
+          [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
+          [FuseV1Options.EnableNodeCliInspectArguments]: false,
+          [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
+          [FuseV1Options.OnlyLoadAppFromAsar]: true,
+        }),
+      ]
       : []),
   ],
 };

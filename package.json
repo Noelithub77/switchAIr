@@ -1,8 +1,8 @@
 {
-  "name": "antigravity-manager",
-  "productName": "Antigravity Manager",
+  "name": "switchAir",
+  "productName": "switchAir",
   "version": "0.10.0",
-  "description": "Antigravity Manager - Electron App",
+  "description": "switchAir switch antigravity, openCode and more",
   "main": ".vite/build/main.js",
   "private": true,
   "scripts": {

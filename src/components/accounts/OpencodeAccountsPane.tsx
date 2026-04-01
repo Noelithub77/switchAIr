@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Edit3, Plus, RefreshCw } from 'lucide-react';
 import { filter, find, uniqBy } from 'lodash-es';
@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { OpencodeAccountCard } from '@/components/accounts/OpencodeAccountCard';
 import { OpencodeImportExportDialog } from '@/components/accounts/OpencodeImportExportDialog';
 import {
@@ -53,6 +54,20 @@ export function OpencodeAccountsPane() {
   const [newAccountOpen, setNewAccountOpen] = useState(false);
   const [selectedProviderKey, setSelectedProviderKey] = useState('');
   const [nextStepPrompt, setNextStepPrompt] = useState<string | null>(null);
+  const [selectedProviderTab, setSelectedProviderTab] = useState('');
+
+  const getProviderLabel = (providerKey: string): string => {
+    if (providerKey === 'github-copilot') {
+      return t('accountSources.opencode.providers.github');
+    }
+
+    if (providerKey === 'openai') {
+      return t('accountSources.opencode.providers.openai');
+    }
+
+    return providerKey;
+  };
+
   const totalAccounts = accounts?.length || 0;
   const liveAccounts = filter(accounts, (account) => account.isLive).length;
   const liveProviders = uniqBy(filter(accounts, (account) => account.isLive), 'providerKey');
@@ -60,6 +75,22 @@ export function OpencodeAccountsPane() {
     liveProviders,
     (account) => account.providerKey === selectedProviderKey,
   );
+  const providerTabs = useMemo(() => {
+    const providers = uniqBy(accounts ?? [], 'providerKey');
+    const preferredOrder = ['github-copilot', 'openai'];
+    const orderedProviders = [
+      ...preferredOrder
+        .map((providerKey) => providers.find((account) => account.providerKey === providerKey))
+        .filter((account): account is OpencodeAccount => Boolean(account)),
+      ...providers.filter((account) => !preferredOrder.includes(account.providerKey)),
+    ];
+
+    return orderedProviders;
+  }, [accounts]);
+  const visibleLiveAccounts = filter(
+    accounts,
+    (account) => account.providerKey === selectedProviderTab && account.isLive,
+  ).length;
 
   useEffect(() => {
     if (!editingAccount) {
@@ -76,9 +107,27 @@ export function OpencodeAccountsPane() {
       return;
     }
 
-    const fallbackProvider = liveProviders[0]?.providerKey || accounts?.[0]?.providerKey || '';
+    const fallbackProvider =
+      liveProviders.find((account) => account.providerKey === selectedProviderTab)?.providerKey ||
+      liveProviders[0]?.providerKey ||
+      selectedProviderTab ||
+      accounts?.[0]?.providerKey ||
+      '';
     setSelectedProviderKey(fallbackProvider);
-  }, [accounts, liveProviders, newAccountOpen]);
+  }, [accounts, liveProviders, newAccountOpen, selectedProviderTab]);
+
+  useEffect(() => {
+    if (!providerTabs.length) {
+      setSelectedProviderTab('');
+      return;
+    }
+
+    if (providerTabs.some((account) => account.providerKey === selectedProviderTab)) {
+      return;
+    }
+
+    setSelectedProviderTab(providerTabs[0].providerKey);
+  }, [providerTabs, selectedProviderTab]);
 
   useEffect(() => {
     if (!isError || !error) {
@@ -117,152 +166,197 @@ export function OpencodeAccountsPane() {
         </div>
       </div>
 
-      <div className="bg-card flex flex-wrap items-center gap-2 rounded-lg border p-3">
-        <Button
-          variant="outline"
-          onClick={() => syncMutation.mutate()}
-          disabled={syncMutation.isPending}
-        >
-          <RefreshCw className={`mr-2 h-4 w-4 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
-          {t('accountSources.opencode.sync')}
-        </Button>
-
-        <Button variant="outline" onClick={() => setNewAccountOpen(true)} disabled={liveAccounts === 0}>
-          <Plus className="mr-2 h-4 w-4" />
-          {t('accountSources.opencode.newAccount')}
-        </Button>
-
-        <OpencodeImportExportDialog
-          exportPending={exportMutation.isPending}
-          importPending={importMutation.isPending}
-          onExport={() =>
-            exportMutation.mutate(undefined, {
-              onSuccess: (result) => {
-                if (result.canceled) {
-                  return;
-                }
-
-                toast({
-                  title: t('accountSources.opencode.exportSuccessTitle'),
-                  description: result.filePath || undefined,
-                });
-              },
-              onError: (mutationError) => {
-                toast({
-                  title: t('accountSources.opencode.exportFailedTitle'),
-                  description:
-                    mutationError instanceof Error ? mutationError.message : String(mutationError),
-                  variant: 'destructive',
-                });
-              },
-            })
-          }
-          onImport={() =>
-            importMutation.mutate(undefined, {
-              onSuccess: (result) => {
-                if (result.canceled) {
-                  return;
-                }
-
-                toast({
-                  title: t('accountSources.opencode.importSuccessTitle'),
-                  description: result.filePath || undefined,
-                });
-              },
-              onError: (mutationError) => {
-                toast({
-                  title: t('accountSources.opencode.importFailedTitle'),
-                  description:
-                    mutationError instanceof Error ? mutationError.message : String(mutationError),
-                  variant: 'destructive',
-                });
-              },
-            })
-          }
-        />
-      </div>
-
-      {nextStepPrompt && (
-        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
-          <div className="font-semibold text-amber-700 dark:text-amber-300">
-            {t('accountSources.opencode.nextStepTitle')}
-          </div>
-          <div className="text-muted-foreground mt-1">{nextStepPrompt}</div>
-        </div>
-      )}
-
-      {isLoading ? (
-        <div className="text-muted-foreground rounded-lg border border-dashed py-14 text-center">
-          {t('accountSources.opencode.loading')}
-        </div>
-      ) : totalAccounts === 0 ? (
-        <div className="text-muted-foreground rounded-lg border border-dashed py-14 text-center">
-          {t('accountSources.opencode.empty')}
-        </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {accounts?.map((account) => (
-            <OpencodeAccountCard
-              key={account.id}
-              account={account}
-              onUse={(accountId) =>
-                activateMutation.mutate(
-                  { accountId },
-                  {
-                    onSuccess: () => {
-                      toast({
-                        title: t('accountSources.opencode.activateSuccessTitle'),
-                        description: t('accountSources.opencode.activateSuccessDescription'),
-                      });
-                    },
-                    onError: (mutationError) => {
-                      toast({
-                        title: t('accountSources.opencode.activateFailedTitle'),
-                        description:
-                          mutationError instanceof Error
-                            ? mutationError.message
-                            : String(mutationError),
-                        variant: 'destructive',
-                      });
-                    },
-                  },
-                )
-              }
-              onRemoveLive={(providerKey) =>
-                removeLiveMutation.mutate(
-                  { providerKey },
-                  {
-                    onSuccess: () => {
-                      toast({
-                        title: t('accountSources.opencode.removeLiveSuccessTitle'),
-                        description: t('accountSources.opencode.removeLiveSuccessDescription'),
-                      });
-                    },
-                    onError: (mutationError) => {
-                      toast({
-                        title: t('accountSources.opencode.removeLiveFailedTitle'),
-                        description:
-                          mutationError instanceof Error
-                            ? mutationError.message
-                            : String(mutationError),
-                        variant: 'destructive',
-                      });
-                    },
-                  },
-                )
-              }
-              onEditNote={setEditingAccount}
-              isActivating={
-                activateMutation.isPending && activateMutation.variables?.accountId === account.id
-              }
-              isRemovingLive={
-                removeLiveMutation.isPending &&
-                removeLiveMutation.variables?.providerKey === account.providerKey
-              }
-            />
+      <Tabs value={selectedProviderTab} onValueChange={setSelectedProviderTab} className="space-y-5">
+        <TabsList className="h-auto flex flex-wrap justify-start gap-2 bg-transparent p-0">
+          {providerTabs.map((account) => (
+            <TabsTrigger
+              key={account.providerKey}
+              value={account.providerKey}
+              className="rounded-full border px-4 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              {getProviderLabel(account.providerKey)}
+              <span className="text-muted-foreground ml-2 text-xs">
+                {filter(accounts, (candidate) => candidate.providerKey === account.providerKey).length}
+              </span>
+            </TabsTrigger>
           ))}
+        </TabsList>
+
+        <div className="bg-card flex flex-wrap items-center gap-2 rounded-lg border p-3">
+          <Button
+            variant="outline"
+            onClick={() => syncMutation.mutate()}
+            disabled={syncMutation.isPending}
+          >
+            <RefreshCw className={`mr-2 h-4 w-4 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
+            {t('accountSources.opencode.sync')}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={() => setNewAccountOpen(true)}
+            disabled={visibleLiveAccounts === 0}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            {t('accountSources.opencode.newAccount')}
+          </Button>
+
+          <OpencodeImportExportDialog
+            exportPending={exportMutation.isPending}
+            importPending={importMutation.isPending}
+            onExport={() =>
+              exportMutation.mutate(undefined, {
+                onSuccess: (result) => {
+                  if (result.canceled) {
+                    return;
+                  }
+
+                  toast({
+                    title: t('accountSources.opencode.exportSuccessTitle'),
+                    description: result.filePath || undefined,
+                  });
+                },
+                onError: (mutationError) => {
+                  toast({
+                    title: t('accountSources.opencode.exportFailedTitle'),
+                    description:
+                      mutationError instanceof Error ? mutationError.message : String(mutationError),
+                    variant: 'destructive',
+                  });
+                },
+              })
+            }
+            onImport={() =>
+              importMutation.mutate(undefined, {
+                onSuccess: (result) => {
+                  if (result.canceled) {
+                    return;
+                  }
+
+                  toast({
+                    title: t('accountSources.opencode.importSuccessTitle'),
+                    description: result.filePath || undefined,
+                  });
+                },
+                onError: (mutationError) => {
+                  toast({
+                    title: t('accountSources.opencode.importFailedTitle'),
+                    description:
+                      mutationError instanceof Error ? mutationError.message : String(mutationError),
+                    variant: 'destructive',
+                  });
+                },
+              })
+            }
+          />
         </div>
-      )}
+
+        {nextStepPrompt && (
+          <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+            <div className="font-semibold text-amber-700 dark:text-amber-300">
+              {t('accountSources.opencode.nextStepTitle')}
+            </div>
+            <div className="text-muted-foreground mt-1">{nextStepPrompt}</div>
+          </div>
+        )}
+
+        {isLoading ? (
+          <div className="text-muted-foreground rounded-lg border border-dashed py-14 text-center">
+            {t('accountSources.opencode.loading')}
+          </div>
+        ) : totalAccounts === 0 ? (
+          <div className="text-muted-foreground rounded-lg border border-dashed py-14 text-center">
+            {t('accountSources.opencode.empty')}
+          </div>
+        ) : !selectedProviderTab ? (
+          <div className="text-muted-foreground rounded-lg border border-dashed py-14 text-center">
+            {t('accountSources.opencode.empty')}
+          </div>
+        ) : (
+          providerTabs.map((provider) => (
+            <TabsContent key={provider.providerKey} value={provider.providerKey} className="mt-0">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div className="text-sm text-muted-foreground">
+                  {t('accountSources.opencode.providerTabDescription', {
+                    provider: getProviderLabel(provider.providerKey),
+                    count: filter(accounts, (account) => account.providerKey === provider.providerKey)
+                      .length,
+                    liveCount: filter(
+                      accounts,
+                      (account) => account.providerKey === provider.providerKey && account.isLive,
+                    ).length,
+                  })}
+                </div>
+              </div>
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-2">
+                {filter(accounts, (account) => account.providerKey === provider.providerKey).map(
+                  (account) => (
+                    <OpencodeAccountCard
+                      key={account.id}
+                      account={account}
+                      onUse={(accountId) =>
+                        activateMutation.mutate(
+                          { accountId },
+                          {
+                            onSuccess: () => {
+                              toast({
+                                title: t('accountSources.opencode.activateSuccessTitle'),
+                                description: t('accountSources.opencode.activateSuccessDescription'),
+                              });
+                            },
+                            onError: (mutationError) => {
+                              toast({
+                                title: t('accountSources.opencode.activateFailedTitle'),
+                                description:
+                                  mutationError instanceof Error
+                                    ? mutationError.message
+                                    : String(mutationError),
+                                variant: 'destructive',
+                              });
+                            },
+                          },
+                        )
+                      }
+                      onRemoveLive={(providerKey) =>
+                        removeLiveMutation.mutate(
+                          { providerKey },
+                          {
+                            onSuccess: () => {
+                              toast({
+                                title: t('accountSources.opencode.removeLiveSuccessTitle'),
+                                description: t('accountSources.opencode.removeLiveSuccessDescription'),
+                              });
+                            },
+                            onError: (mutationError) => {
+                              toast({
+                                title: t('accountSources.opencode.removeLiveFailedTitle'),
+                                description:
+                                  mutationError instanceof Error
+                                    ? mutationError.message
+                                    : String(mutationError),
+                                variant: 'destructive',
+                              });
+                            },
+                          },
+                        )
+                      }
+                      onEditNote={setEditingAccount}
+                      isActivating={
+                        activateMutation.isPending &&
+                        activateMutation.variables?.accountId === account.id
+                      }
+                      isRemovingLive={
+                        removeLiveMutation.isPending &&
+                        removeLiveMutation.variables?.providerKey === account.providerKey
+                      }
+                    />
+                  ),
+                )}
+              </div>
+            </TabsContent>
+          ))
+        )}
+      </Tabs>
 
       <Dialog open={newAccountOpen} onOpenChange={setNewAccountOpen}>
         <DialogContent>
@@ -278,12 +372,14 @@ export function OpencodeAccountsPane() {
                 <SelectValue placeholder={t('accountSources.opencode.providerPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                {liveProviders.map((account) => (
-                  <SelectItem key={account.providerKey} value={account.providerKey}>
-                    {account.providerKey}
-                    {account.email ? ` · ${account.email}` : ''}
-                  </SelectItem>
-                ))}
+                {liveProviders
+                  .filter((account) => account.providerKey === selectedProviderTab)
+                  .map((account) => (
+                    <SelectItem key={account.providerKey} value={account.providerKey}>
+                      {account.providerKey}
+                      {account.email ? ` · ${account.email}` : ''}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
 

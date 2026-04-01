@@ -77,6 +77,8 @@ i18n
               title: 'OpenCode',
               description:
                 'Manage saved OpenCode accounts from auth.json and switchAIr.jsonc in one place.',
+              providerTabDescription:
+                'Showing {{provider}} accounts: {{count}} total, {{liveCount}} live.',
               saved: 'Saved',
               liveCount: 'Live',
               loading: 'Loading OpenCode accounts...',
@@ -91,6 +93,10 @@ i18n
               provider: 'Provider',
               providerPlaceholder: 'Select a provider',
               clearSlot: 'Clear Slot',
+              providers: {
+                github: 'GitHub',
+                openai: 'OpenAI',
+              },
               export: 'Export',
               import: 'Import',
               exportConfirm: 'Export Anyway',

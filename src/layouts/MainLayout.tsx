@@ -87,17 +87,10 @@ export const MainLayout: React.FC = () => {
                   isCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100',
                 )}
               >
-                <h1 className="text-xl font-bold tracking-tight">Antigravity</h1>
+                <h1 className="text-xl font-bold tracking-tight">switchAir</h1>
               </div>
             </div>
-            <div
-              className={cn(
-                'text-muted-foreground mt-1 overflow-hidden text-xs whitespace-nowrap transition-all duration-300',
-                isCollapsed ? 'h-0 opacity-0' : 'h-auto opacity-100',
-              )}
-            >
-              Manager
-            </div>
+
           </div>
 
           <nav className="flex-1 space-y-2 px-2">

@@ -24,6 +24,7 @@ This document is a user-level guide for AI assistants working in this repository
   - Radix UI (Primitives), Lucide React (Icons), Simple Icons (`@icons-pack/react-simple-icons`)
   - `class-variance-authority` (CVA), `react-i18next` + `i18next`
   - TanStack Router (Routing), TanStack Query (State Management)
+  - Account source tabs: Antigravity + OpenCode (state persisted with Zustand)
   - Components: Modular design under `src/components`
 - **Backend (Electron Main/Server)**:
   - Electron (Main/Preload/Renderer architecture)
@@ -55,6 +56,7 @@ This document is a user-level guide for AI assistants working in this repository
 │  ├─ routes/            # TanStack Router route definitions
 │  ├─ server/            # NestJS backend logic (Gateway/Proxy)
 │  ├─ services/          # Service layer
+│  ├─ store/             # Client-side Zustand stores
 │  ├─ styles/            # Global styles (Tailwind classes)
 │  ├─ tests/             # Test code
 │  ├─ types/             # TypeScript type definitions
@@ -72,6 +74,13 @@ This document is a user-level guide for AI assistants working in this repository
 - **Modular components**: Each component should have its own directory, with at least a `.tsx` file and optional styles/subcomponents.
 - **Shared capabilities**: General helpers in `src/utils/`; low-level shared wrappers in `src/lib/`.
 - **Service layer**: Centralize data access in `src/services/` or `src/ipc/`; frontend should consume IPC or RPC only.
+
+### Accounts Source Tabs (Antigravity / OpenCode)
+
+- Use `src/components/accounts/AccountSourceTabs.tsx` as the single entry for account source switching.
+- Keep source state in `src/store/account-source.store.ts` and persist with localStorage key `account-source-store`.
+- OpenCode tab UI should stay under `src/components/accounts/OpencodeAccountsPane.tsx` and related account components.
+- When adding/changing source tabs, update all of: tab triggers/test IDs, `AccountSource` union type, and i18n keys under `accountSources.*`.
 
 ## 📦 Common Scripts
 
