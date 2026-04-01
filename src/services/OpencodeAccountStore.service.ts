@@ -301,6 +301,53 @@ export class OpencodeAccountStoreService {
 
   static async removeLiveProviderAuth(providerKey: string): Promise<void> {
     const liveEntries = await this.readAuthFile();
+    const liveEntry = liveEntries[providerKey];
+    if (liveEntry) {
+      const profile = await OpencodeProfileResolverService.resolve(providerKey, liveEntry);
+      const encryptedPayload = await encrypt(JSON.stringify(liveEntry));
+      const storedAccounts = await this.readStoredAccounts();
+      const now = Date.now();
+      const existingIndex = await this.findMatchingAccountIndex(storedAccounts, providerKey, {
+        authEntry: liveEntry,
+        email: profile.email,
+        accountId: profile.accountId || liveEntry.accountId,
+      });
+
+      if (existingIndex >= 0) {
+        const existing = storedAccounts[existingIndex];
+        storedAccounts[existingIndex] = {
+          ...existing,
+          authType: liveEntry.type,
+          email: profile.email || existing.email,
+          name: profile.name || existing.name,
+          avatarUrl: profile.avatarUrl || existing.avatarUrl,
+          accountId: profile.accountId || liveEntry.accountId || existing.accountId,
+          lastSyncedAt: now,
+          updatedAt: now,
+          archived: false,
+          encryptedPayload,
+        };
+      } else {
+        storedAccounts.push({
+          id: uuidv4(),
+          providerKey,
+          authType: liveEntry.type,
+          email: profile.email,
+          name: profile.name,
+          avatarUrl: profile.avatarUrl,
+          accountId: profile.accountId || liveEntry.accountId,
+          note: '',
+          createdAt: now,
+          updatedAt: now,
+          lastSyncedAt: now,
+          archived: false,
+          encryptedPayload,
+        });
+      }
+
+      await this.writeStoredAccounts(storedAccounts);
+    }
+
     delete liveEntries[providerKey];
     await this.writeAuthFile(liveEntries);
   }

@@ -20,7 +20,7 @@
     "test:all": "vitest run && playwright test",
     "type-check": "tsc --noEmit"
   },
-  "author": "Draculabo",
+  "author": "Noelithub77",
   "license": "CC-BY-NC-SA-4.0",
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",

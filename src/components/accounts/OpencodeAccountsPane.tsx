@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { Edit3, RefreshCw } from 'lucide-react';
-import { filter } from 'lodash-es';
+import { Edit3, Plus, RefreshCw } from 'lucide-react';
+import { filter, find, uniqBy } from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
 import type { OpencodeAccount } from '@/types/opencode-account';
@@ -9,6 +9,7 @@ import type { OpencodeAccount } from '@/types/opencode-account';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { OpencodeAccountCard } from '@/components/accounts/OpencodeAccountCard';
 import { OpencodeImportExportDialog } from '@/components/accounts/OpencodeImportExportDialog';
 import {
@@ -42,6 +50,16 @@ export function OpencodeAccountsPane() {
 
   const [editingAccount, setEditingAccount] = useState<OpencodeAccount | null>(null);
   const [noteDraft, setNoteDraft] = useState('');
+  const [newAccountOpen, setNewAccountOpen] = useState(false);
+  const [selectedProviderKey, setSelectedProviderKey] = useState('');
+  const [nextStepPrompt, setNextStepPrompt] = useState<string | null>(null);
+  const totalAccounts = accounts?.length || 0;
+  const liveAccounts = filter(accounts, (account) => account.isLive).length;
+  const liveProviders = uniqBy(filter(accounts, (account) => account.isLive), 'providerKey');
+  const selectedProvider = find(
+    liveProviders,
+    (account) => account.providerKey === selectedProviderKey,
+  );
 
   useEffect(() => {
     if (!editingAccount) {
@@ -51,6 +69,16 @@ export function OpencodeAccountsPane() {
 
     setNoteDraft(editingAccount.note || '');
   }, [editingAccount]);
+
+  useEffect(() => {
+    if (!newAccountOpen) {
+      setSelectedProviderKey('');
+      return;
+    }
+
+    const fallbackProvider = liveProviders[0]?.providerKey || accounts?.[0]?.providerKey || '';
+    setSelectedProviderKey(fallbackProvider);
+  }, [accounts, liveProviders, newAccountOpen]);
 
   useEffect(() => {
     if (!isError || !error) {
@@ -63,9 +91,6 @@ export function OpencodeAccountsPane() {
       variant: 'destructive',
     });
   }, [error, isError, t, toast]);
-
-  const totalAccounts = accounts?.length || 0;
-  const liveAccounts = filter(accounts, (account) => account.isLive).length;
 
   return (
     <div className="space-y-5">
@@ -100,6 +125,11 @@ export function OpencodeAccountsPane() {
         >
           <RefreshCw className={`mr-2 h-4 w-4 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
           {t('accountSources.opencode.sync')}
+        </Button>
+
+        <Button variant="outline" onClick={() => setNewAccountOpen(true)} disabled={liveAccounts === 0}>
+          <Plus className="mr-2 h-4 w-4" />
+          {t('accountSources.opencode.newAccount')}
         </Button>
 
         <OpencodeImportExportDialog
@@ -151,6 +181,15 @@ export function OpencodeAccountsPane() {
           }
         />
       </div>
+
+      {nextStepPrompt && (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+          <div className="font-semibold text-amber-700 dark:text-amber-300">
+            {t('accountSources.opencode.nextStepTitle')}
+          </div>
+          <div className="text-muted-foreground mt-1">{nextStepPrompt}</div>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="text-muted-foreground rounded-lg border border-dashed py-14 text-center">
@@ -224,6 +263,85 @@ export function OpencodeAccountsPane() {
           ))}
         </div>
       )}
+
+      <Dialog open={newAccountOpen} onOpenChange={setNewAccountOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('accountSources.opencode.newAccountDialogTitle')}</DialogTitle>
+            <DialogDescription>{t('accountSources.opencode.newAccountDialogDescription')}</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            <Label htmlFor="opencode-provider-select">{t('accountSources.opencode.provider')}</Label>
+            <Select value={selectedProviderKey} onValueChange={setSelectedProviderKey}>
+              <SelectTrigger id="opencode-provider-select">
+                <SelectValue placeholder={t('accountSources.opencode.providerPlaceholder')} />
+              </SelectTrigger>
+              <SelectContent>
+                {liveProviders.map((account) => (
+                  <SelectItem key={account.providerKey} value={account.providerKey}>
+                    {account.providerKey}
+                    {account.email ? ` · ${account.email}` : ''}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {selectedProvider && (
+              <p className="text-muted-foreground text-sm">
+                {t('accountSources.opencode.newAccountDialogHint', {
+                  provider: selectedProvider.providerKey,
+                  email: selectedProvider.email || t('accountSources.opencode.missingEmail'),
+                })}
+              </p>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNewAccountOpen(false)}>
+              {t('cloud.identity.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                if (!selectedProviderKey) {
+                  return;
+                }
+
+                removeLiveMutation.mutate(
+                  { providerKey: selectedProviderKey },
+                  {
+                    onSuccess: () => {
+                      setNewAccountOpen(false);
+                      setNextStepPrompt(
+                        t('accountSources.opencode.nextStepMessage', {
+                          provider: selectedProvider?.providerKey || selectedProviderKey,
+                        }),
+                      );
+                      toast({
+                        title: t('accountSources.opencode.removeLiveSuccessTitle'),
+                        description: t('accountSources.opencode.removeLiveSuccessDescription'),
+                      });
+                    },
+                    onError: (mutationError) => {
+                      toast({
+                        title: t('accountSources.opencode.removeLiveFailedTitle'),
+                        description:
+                          mutationError instanceof Error
+                            ? mutationError.message
+                            : String(mutationError),
+                        variant: 'destructive',
+                      });
+                    },
+                  },
+                );
+              }}
+              disabled={removeLiveMutation.isPending || !selectedProviderKey}
+            >
+              {t('accountSources.opencode.clearSlot')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={Boolean(editingAccount)} onOpenChange={(open) => !open && setEditingAccount(null)}>
         <DialogContent>

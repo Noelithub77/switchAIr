@@ -84,6 +84,13 @@ i18n
               unknown: 'Unknown Account',
               missingEmail: 'No email available',
               sync: 'Sync from auth.json',
+              newAccount: 'New Account',
+              newAccountDialogTitle: 'Move a live provider slot',
+              newAccountDialogDescription:
+                'Pick a provider that is currently live. We will keep the account in switchAIr.jsonc, clear it from auth.json, and then you can add one more auth in OpenCode.',
+              provider: 'Provider',
+              providerPlaceholder: 'Select a provider',
+              clearSlot: 'Clear Slot',
               export: 'Export',
               import: 'Import',
               exportConfirm: 'Export Anyway',
@@ -103,6 +110,12 @@ i18n
               removeLiveSuccessTitle: 'Live OpenCode auth removed',
               removeLiveSuccessDescription: 'The saved account remains in switchAIr.jsonc.',
               removeLiveFailedTitle: 'Failed to remove live OpenCode auth',
+              occupied: 'In Use',
+              nextStepTitle: 'Next step',
+              nextStepMessage:
+                'Open OpenCode and add one more auth for {{provider}}. The previous live slot has been moved into switchAIr.jsonc.',
+              newAccountDialogHint:
+                'We will clear the live slot for {{provider}} ({{email}}) and keep a saved copy in switchAIr.jsonc.',
               editNote: 'Edit Note',
               editNoteDescription: 'Update the note stored with this saved OpenCode account.',
               note: 'Note',
