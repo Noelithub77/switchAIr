@@ -4,7 +4,8 @@ import { safeStorage, app } from 'electron';
 import path from 'path';
 import fs from 'fs/promises';
 
-const SERVICE_NAME = 'AntigravityManager';
+const SERVICE_NAME = 'switchAir';
+const LEGACY_SERVICE_NAMES = ['AntigravityManager'];
 const ACCOUNT_NAME = 'MasterKey';
 const KEYCHAIN_ERROR_CODE = 'ERR_KEYCHAIN_UNAVAILABLE';
 const KEYCHAIN_HINT_TRANSLOCATION = 'HINT_APP_TRANSLOCATION';
@@ -87,6 +88,15 @@ async function tryKeytar(): Promise<typeof import('keytar') | null> {
   }
 }
 
+async function readKeytarPassword(serviceName: string): Promise<string | null> {
+  const keytar = await tryKeytar();
+  if (!keytar) {
+    return null;
+  }
+
+  return keytar.getPassword(serviceName, ACCOUNT_NAME);
+}
+
 async function readSafeStorageKey(keyPath: string): Promise<Buffer | null> {
   if (!safeStorage.isEncryptionAvailable()) {
     return null;
@@ -127,13 +137,20 @@ async function getOrCreateSafeStorageKey(
 }
 
 async function readKeytarKey(): Promise<Buffer | null> {
-  const keytar = await tryKeytar();
-  if (!keytar) {
-    return null;
-  }
-
-  const existingKey = await keytar.getPassword(SERVICE_NAME, ACCOUNT_NAME);
+  const existingKey = await readKeytarPassword(SERVICE_NAME);
   if (!existingKey) {
+    for (const legacyServiceName of LEGACY_SERVICE_NAMES) {
+      const legacyKey = await readKeytarPassword(legacyServiceName);
+      if (legacyKey) {
+        if (/^[a-f0-9]+$/i.test(legacyKey) && legacyKey.length === 64) {
+          const keytar = await tryKeytar();
+          if (keytar) {
+            await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, legacyKey);
+          }
+        }
+        return Buffer.from(legacyKey, 'hex');
+      }
+    }
     return null;
   }
 
@@ -154,6 +171,14 @@ async function getOrCreateKeytarKey(): Promise<{ key: Buffer; created: boolean }
   const existingKey = await keytar.getPassword(SERVICE_NAME, ACCOUNT_NAME);
   if (existingKey) {
     return { key: Buffer.from(existingKey, 'hex'), created: false };
+  }
+
+  for (const legacyServiceName of LEGACY_SERVICE_NAMES) {
+    const legacyKey = await keytar.getPassword(legacyServiceName, ACCOUNT_NAME);
+    if (legacyKey) {
+      await keytar.setPassword(SERVICE_NAME, ACCOUNT_NAME, legacyKey);
+      return { key: Buffer.from(legacyKey, 'hex'), created: false };
+    }
   }
 
   const buffer = crypto.randomBytes(32);

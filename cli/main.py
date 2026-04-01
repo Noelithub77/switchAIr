@@ -31,7 +31,7 @@ def main_callback(ctx: typer.Context):
 def interactive_mode():
     """Show interactive menu for selecting actions."""
     try:
-        console.print("\n[bold cyan]Antigravity Manager - Interactive Mode[/bold cyan]\n")
+        console.print("\n[bold cyan]switchAir - Interactive Mode[/bold cyan]\n")
         
         choices = [
             "List all accounts",

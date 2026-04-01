@@ -1,4 +1,19 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('fs', async () => {
+  const actual = await vi.importActual<typeof import('fs')>('fs');
+  const existsSync = vi.fn((value: unknown) => value === '/usr/share/antigravity/antigravity');
+
+  return {
+    ...actual,
+    default: {
+      ...actual,
+      existsSync,
+    },
+    existsSync,
+  };
+});
+
 import {
   getAppDataDir,
   getAntigravityDbPath,

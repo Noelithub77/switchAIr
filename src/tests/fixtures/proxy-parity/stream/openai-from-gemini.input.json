@@ -1,0 +1,26 @@
+{
+  "model": "gemini-3-flash",
+  "upstream": {
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "Hello "
+            },
+            {
+              "functionCall": {
+                "id": "tool_1",
+                "name": "search",
+                "args": {
+                  "query": "switchAir"
+                }
+              }
+            }
+          ]
+        },
+        "finishReason": "STOP"
+      }
+    ]
+  }
+}

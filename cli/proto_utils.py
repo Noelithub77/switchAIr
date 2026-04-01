@@ -1,5 +1,5 @@
 
-# a:\UnityProjects\ManagerFork\AntigravityManager\cli\proto_utils.py
+# switchAir CLI protobuf helpers
 import struct
 import base64
 

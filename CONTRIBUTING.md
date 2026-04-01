@@ -1,8 +1,8 @@
-# Contributing to Antigravity Manager
+# Contributing to switchAir
 
-First off, thank you for considering contributing to Antigravity Manager! 🎉
+First off, thank you for considering contributing to switchAir! 🎉
 
-It's people like you that make Antigravity Manager such a great tool. We welcome contributions from everyone, whether it's a bug report, feature suggestion, documentation improvement, or code contribution.
+It's people like you that make switchAir such a great tool. We welcome contributions from everyone, whether it's a bug report, feature suggestion, documentation improvement, or code contribution.
 
 ## 📋 Table of Contents
 
@@ -24,12 +24,12 @@ This project and everyone participating in it is governed by our [Code of Conduc
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/AntigravityManager.git
-   cd AntigravityManager
+   git clone https://github.com/YOUR_USERNAME/switchAir.git
+   cd switchAir
    ```
 3. **Add the upstream remote**:
    ```bash
-   git remote add upstream https://github.com/Draculabo/AntigravityManager.git
+   git remote add upstream https://github.com/Noelithub77/switchAir.git
    ```
 
 ## 💻 Development Setup
@@ -160,7 +160,7 @@ docs(readme): update installation instructions
 
 ## 🐛 Reporting Bugs
 
-Found a bug? Please [create an issue](https://github.com/Draculabo/AntigravityManager/issues/new?template=bug_report.md) with:
+Found a bug? Please [create an issue](https://github.com/Noelithub77/switchAir/issues/new?template=bug_report.md) with:
 
 - **Clear title** describing the issue
 - **Steps to reproduce** the behavior
@@ -170,7 +170,7 @@ Found a bug? Please [create an issue](https://github.com/Draculabo/AntigravityMa
 
 ## 💡 Suggesting Features
 
-Have an idea? Please [create an issue](https://github.com/Draculabo/AntigravityManager/issues/new?template=feature_request.md) with:
+Have an idea? Please [create an issue](https://github.com/Noelithub77/switchAir/issues/new?template=feature_request.md) with:
 
 - **Clear description** of the feature
 - **Use case** - why is this feature needed?
@@ -178,7 +178,7 @@ Have an idea? Please [create an issue](https://github.com/Draculabo/AntigravityM
 
 ## 🙏 Thank You
 
-Your contributions help make Antigravity Manager better for everyone. Thank you for taking the time to contribute!
+Your contributions help make switchAir better for everyone. Thank you for taking the time to contribute!
 
 ---
 

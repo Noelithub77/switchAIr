@@ -1,0 +1,7 @@
+{
+  "contains": [
+    "\"delta\":{\"content\":\"Hello \"}",
+    "\"tool_calls\":[{\"index\":0,\"id\":\"tool_1\",\"type\":\"function\",\"function\":{\"name\":\"search\",\"arguments\":\"{\\\"query\\\":\\\"switchAir\\\"}\"}}]",
+    "\"finish_reason\":\"stop\""
+  ]
+}

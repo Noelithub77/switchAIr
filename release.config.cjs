@@ -6,7 +6,7 @@
  * instead of Gitmoji (since the project history doesn't use emojis).
  */
 
-const REPO_URL = 'https://github.com/Draculabo/AntigravityManager';
+const REPO_URL = 'https://github.com/Noelithub77/switchAir';
 const GITHUB_BASE_URL = 'https://github.com';
 const FULL_CHANGELOG_URL = `${REPO_URL}/blob/main/CHANGELOG.md`;
 

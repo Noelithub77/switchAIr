@@ -78,8 +78,8 @@ describe('Process Handler', () => {
       mockFindProcess.mockResolvedValue([
         {
           pid: 12348,
-          name: 'Antigravity Manager',
-          cmd: '/Applications/Antigravity Manager.app/Contents/MacOS/Antigravity Manager',
+          name: 'switchAir',
+          cmd: '/Applications/switchAir.app/Contents/MacOS/switchAir',
         },
       ]);
 

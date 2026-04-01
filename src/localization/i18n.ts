@@ -17,7 +17,7 @@ i18n
     resources: {
       en: {
         translation: {
-          appName: 'Antigravity Manager',
+          appName: 'switchAir',
           status: {
             checking: 'Checking status...',
             running: 'Antigravity is running in background',
@@ -156,7 +156,7 @@ i18n
             models: 'Models',
             appearance: {
               title: 'Appearance',
-              description: 'Customize how Antigravity Manager looks on your device.',
+              description: 'Customize how switchAir looks on your device.',
             },
             darkMode: 'Dark Mode',
             darkModeDescription: 'Enable dark mode for better viewing at night.',
@@ -869,7 +869,7 @@ i18n
       },
       ru: {
         translation: {
-          appName: 'Antigravity Manager',
+          appName: 'switchAir',
           status: {
             checking: 'Проверка статуса...',
             running: 'Antigravity работает в фоне',
@@ -927,7 +927,7 @@ i18n
             models: 'Модели',
             appearance: {
               title: 'Внешний вид',
-              description: 'Настройте внешний вид Antigravity Manager.',
+              description: 'Настройте внешний вид switchAir.',
             },
             darkMode: 'Темная тема',
             darkModeDescription: 'Включить темную тему для комфортной работы ночью.',

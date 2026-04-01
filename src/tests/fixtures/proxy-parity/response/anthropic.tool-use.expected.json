@@ -1,0 +1,23 @@
+{
+  "model": "claude-3-5-sonnet",
+  "message": {
+    "content": "Hello",
+    "reasoning_content": "Reasoning here",
+    "tool_calls": [
+      {
+        "id": "tool_1",
+        "type": "function",
+        "function": {
+          "name": "search",
+          "arguments": "{\"query\":\"switchAir\"}"
+        }
+      }
+    ]
+  },
+  "finish_reason": "tool_calls",
+  "usage": {
+    "prompt_tokens": 10,
+    "completion_tokens": 5,
+    "total_tokens": 15
+  }
+}

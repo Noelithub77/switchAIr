@@ -1,0 +1,29 @@
+{
+  "id": "msg_1",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-3-5-sonnet",
+  "content": [
+    {
+      "type": "thinking",
+      "thinking": "Reasoning here"
+    },
+    {
+      "type": "text",
+      "text": "Hello"
+    },
+    {
+      "type": "tool_use",
+      "id": "tool_1",
+      "name": "search",
+      "input": {
+        "query": "switchAir"
+      }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 5
+  }
+}

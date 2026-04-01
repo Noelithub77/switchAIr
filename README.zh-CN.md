@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/assets/logo.png" alt="Antigravity Manager" width="128" height="128" />
+  <img src="docs/assets/logo.png" alt="switchAir" width="128" height="128" />
 </p>
 
-<h1 align="center">Antigravity Manager</h1>
+<h1 align="center">switchAir</h1>
 
 <p align="center">
   <strong>🚀 专业的 Google Gemini & Claude AI 多账号管理器</strong>
@@ -13,23 +13,23 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Draculabo/AntigravityManager/actions/workflows/testing.yaml">
-    <img src="https://github.com/Draculabo/AntigravityManager/actions/workflows/testing.yaml/badge.svg" alt="Tests" />
+  <a href="https://github.com/Noelithub77/switchAir/actions/workflows/testing.yaml">
+    <img src="https://github.com/Noelithub77/switchAir/actions/workflows/testing.yaml/badge.svg" alt="Tests" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/actions/workflows/lint.yaml">
-    <img src="https://github.com/Draculabo/AntigravityManager/actions/workflows/lint.yaml/badge.svg" alt="Lint" />
+  <a href="https://github.com/Noelithub77/switchAir/actions/workflows/lint.yaml">
+    <img src="https://github.com/Noelithub77/switchAir/actions/workflows/lint.yaml/badge.svg" alt="Lint" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/releases">
-    <img src="https://img.shields.io/github/v/release/Draculabo/AntigravityManager?style=flat-square" alt="Release" />
+  <a href="https://github.com/Noelithub77/switchAir/releases">
+    <img src="https://img.shields.io/github/v/release/Noelithub77/switchAir?style=flat-square" alt="Release" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/releases">
-    <img src="https://img.shields.io/github/downloads/Draculabo/AntigravityManager/total?style=flat-square&color=blue" alt="Downloads" />
+  <a href="https://github.com/Noelithub77/switchAir/releases">
+    <img src="https://img.shields.io/github/downloads/Noelithub77/switchAir/total?style=flat-square&color=blue" alt="Downloads" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Draculabo/AntigravityManager?style=flat-square" alt="License" />
+  <a href="https://github.com/Noelithub77/switchAir/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/Noelithub77/switchAir?style=flat-square" alt="License" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/stargazers">
-    <img src="https://img.shields.io/github/stars/Draculabo/AntigravityManager?style=flat-square" alt="Stars" />
+  <a href="https://github.com/Noelithub77/switchAir/stargazers">
+    <img src="https://img.shields.io/github/stars/Noelithub77/switchAir?style=flat-square" alt="Stars" />
   </a>
 </p>
 
@@ -44,7 +44,7 @@
 
 ## 📖 目录
 
-- [为什么选择 Antigravity Manager？](#-为什么选择-antigravity-manager)
+- [为什么选择 switchAir？](#-为什么选择-switchair)
 - [功能特性](#-功能特性)
 - [截图预览](#-截图预览)
 - [快速开始](#-快速开始)
@@ -56,7 +56,7 @@
 
 ---
 
-## ✨ 为什么选择 Antigravity Manager？
+## ✨ 为什么选择 switchAir？
 
 在使用 Antigravity IDE 时，你是否遇到过这些问题？
 
@@ -66,7 +66,7 @@
 - ⏰ 担心错过额度重置时间
 - 🔌 需要可靠的本地 API 代理用于开发工具
 
-**Antigravity Manager** 就是为解决这些问题而生的！它是一个专业的 Electron 桌面应用，帮助你：
+**switchAir** 就是为解决这些问题而生的！它是一个专业的 Electron 桌面应用，帮助你：
 
 - ✅ **无限账号池** - 添加任意数量的 Google Gemini / Claude 账号
 - ✅ **智能自动切换** - 额度不足或被限速时自动切换到下一个可用账号
@@ -180,13 +180,13 @@
 
 ### 下载安装
 
-从 [Releases](https://github.com/Draculabo/AntigravityManager/releases) 页面下载适合你平台的最新版本。
+从 [Releases](https://github.com/Noelithub77/switchAir/releases) 页面下载适合你平台的最新版本。
 
 | 平台                | 下载链接                                                                       |
 | ------------------- | ------------------------------------------------------------------------------ |
-| Windows (x64/ARM64) | [.exe 安装包](https://github.com/Draculabo/AntigravityManager/releases/latest) |
-| macOS               | [.dmg 安装包](https://github.com/Draculabo/AntigravityManager/releases/latest) |
-| Linux               | [.deb / .rpm](https://github.com/Draculabo/AntigravityManager/releases/latest) |
+| Windows (x64/ARM64) | [.exe 安装包](https://github.com/Noelithub77/switchAir/releases/latest) |
+| macOS               | [.dmg 安装包](https://github.com/Noelithub77/switchAir/releases/latest) |
+| Linux               | [.deb / .rpm](https://github.com/Noelithub77/switchAir/releases/latest) |
 
 ### 从源码构建
 
@@ -199,8 +199,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/Draculabo/AntigravityManager.git
-cd AntigravityManager
+git clone https://github.com/Noelithub77/switchAir.git
+cd switchAir
 
 # 安装依赖
 npm install
@@ -245,7 +245,7 @@ npm run make
 ### 项目结构
 
 ```
-AntigravityManager/
+switchAir/
 ├── src/
 │   ├── main.ts          # Electron 主进程
 │   ├── preload.ts       # 预加载脚本
@@ -290,8 +290,8 @@ AntigravityManager/
 2. 打开终端执行以下命令（每次更新后都需要重新执行）
 
 ```plaintext
-sudo xattr -dr com.apple.quarantine "/Applications/Antigravity Manager 2.app"
-codesign --force --deep --sign - "/Applications/Antigravity Manager 2.app"
+sudo xattr -dr com.apple.quarantine "/Applications/switchAir 2.app"
+codesign --force --deep --sign - "/Applications/switchAir 2.app"
 ```
 
 重新打开应用后，Keychain 应会提示授权（可选“始终允许”）。
@@ -301,7 +301,7 @@ codesign --force --deep --sign - "/Applications/Antigravity Manager 2.app"
 <details>
 <summary><b>Q: 如何反馈问题或建议？</b></summary>
 
-请通过 [GitHub Issues](https://github.com/Draculabo/AntigravityManager/issues) 提交问题或建议。
+请通过 [GitHub Issues](https://github.com/Noelithub77/switchAir/issues) 提交问题或建议。
 
 </details>
 
@@ -309,11 +309,11 @@ codesign --force --deep --sign - "/Applications/Antigravity Manager 2.app"
 
 ## 🌟 Star History
 
-<a href="https://github.com/Draculabo/AntigravityManager/stargazers">
+<a href="https://github.com/Noelithub77/switchAir/stargazers">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Draculabo/AntigravityManager&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Draculabo/AntigravityManager&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Draculabo/AntigravityManager&type=Date" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Noelithub77/switchAir&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Noelithub77/switchAir&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Noelithub77/switchAir&type=Date" />
   </picture>
 </a>
 

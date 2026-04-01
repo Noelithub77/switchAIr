@@ -2,7 +2,7 @@
 
 ## What This PR Adds
 
-A complete **Command-Line Interface (CLI)** for Antigravity Manager with 18+ commands for power users.
+A complete **Command-Line Interface (CLI)** for switchAir with 18+ commands for power users.
 
 ## Key Features
 

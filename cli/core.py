@@ -30,11 +30,11 @@ DB_NAME = 'cloud_accounts.db'
 # Try to find user data path
 if sys.platform == 'win32':
     APPDATA = os.getenv('APPDATA')
-    USER_DATA_DIR = os.path.join(APPDATA, 'AntigravityManager')
+    USER_DATA_DIR = os.path.join(APPDATA, 'switchAir')
     ANTIGRAVITY_APP_DATA = os.path.join(APPDATA, 'Antigravity IDE') # Or whatever the IDE name is
 else:
     # Fallback for non-windows (though user is on windows)
-    USER_DATA_DIR = os.path.expanduser('~/.config/AntigravityManager')
+    USER_DATA_DIR = os.path.expanduser('~/.config/switchAir')
 def find_antigravity_executable():
     """Smartly find the Antigravity IDE executable path."""
     # 1. Try to find if it's already running (most reliable)
@@ -52,11 +52,16 @@ def find_antigravity_executable():
     
     candidates = [
         # User-specific install
+        os.path.join(local_appdata, 'Programs', 'switchAir', 'switchAir.exe'),
+        # Legacy app install
         os.path.join(local_appdata, 'Programs', 'Antigravity', 'Antigravity.exe'),
         # System-wide install
+        os.path.join(prog_files, 'switchAir', 'switchAir.exe'),
+        # Legacy system-wide install
         os.path.join(prog_files, 'Antigravity', 'Antigravity.exe'),
         # Developer/Custom paths (A: drive etc.)
         r"A:\Antigravity\Antigravity.exe",
+        r"A:\UnityProjects\ManagerFork\switchAir\out\switchAir-win32-x64\switchAir.exe",
         r"A:\UnityProjects\ManagerFork\AntigravityManager\out\Antigravity Manager-win32-x64\Antigravity Manager.exe"
     ]
     
@@ -94,7 +99,8 @@ def get_data_dirs():
     appdata = os.getenv('APPDATA')
     return [
         os.path.join(home, '.antigravity-agent'),
-        os.path.join(appdata, 'Antigravity Manager'),
+        os.path.join(appdata, 'switchAir'),
+        os.path.join(appdata, 'switchAir'),
         os.path.join(appdata, 'AntigravityManager'),
         os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.config')),
         os.path.abspath(os.path.join(os.path.dirname(__file__), '..')),
@@ -327,7 +333,7 @@ def inject_token(account):
         print(f"Database connection failed: {e}")
         return False
 
-def kill_process(name_hints=["Antigravity", "Antigravity Manager"]):
+def kill_process(name_hints=["switchAir", "Antigravity", "Antigravity Manager"]):
     # On Windows it might be Antigravity.exe or Code.exe
     killed = False
     for proc in psutil.process_iter(['pid', 'name']):

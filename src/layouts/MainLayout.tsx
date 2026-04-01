@@ -7,6 +7,7 @@ import {
   Settings,
   Network,
   Rocket,
+  BarChart3,
   ChevronLeft,
   ChevronRight,
   RefreshCw,
@@ -40,6 +41,11 @@ export const MainLayout: React.FC = () => {
       to: '/',
       icon: LayoutDashboard,
       label: t('nav.accounts'),
+    },
+    {
+      to: '/copilot',
+      icon: BarChart3,
+      label: t('nav.copilot', 'Copilot Usage'),
     },
     {
       to: '/proxy',
@@ -90,7 +96,6 @@ export const MainLayout: React.FC = () => {
                 <h1 className="text-xl font-bold tracking-tight">switchAir</h1>
               </div>
             </div>
-
           </div>
 
           <nav className="flex-1 space-y-2 px-2">

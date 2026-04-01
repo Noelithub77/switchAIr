@@ -313,12 +313,12 @@ async function installExtensions() {
 }
 */
 function checkForUpdates() {
-  updateElectronApp({
-    updateSource: {
-      type: UpdateSourceType.ElectronPublicUpdateService,
-      repo: 'Draculabo/AntigravityManager',
-    },
-  });
+      updateElectronApp({
+        updateSource: {
+          type: UpdateSourceType.ElectronPublicUpdateService,
+          repo: 'Noelithub77/switchAir',
+        },
+      });
 }
 
 async function setupORPC() {

@@ -292,8 +292,13 @@ export async function closeAntigravity(): Promise<void> {
       if (p.pid === currentPid) {
         return false;
       }
-      // Exclude this electron app (if named Antigravity Manager or antigravity-manager)
-      if (p.cmd.includes('Antigravity Manager') || p.cmd.includes('antigravity-manager')) {
+      // Exclude this electron app (switchAir and legacy Antigravity Manager names)
+      if (
+        p.cmd.includes('switchAir') ||
+        p.cmd.includes('SwitchAir') ||
+        p.cmd.includes('Antigravity Manager') ||
+        p.cmd.includes('antigravity-manager')
+      ) {
         return false;
       }
       // Match Antigravity (but not manager)

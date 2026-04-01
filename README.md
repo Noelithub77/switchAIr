@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/assets/logo.png" alt="Antigravity Manager" width="128" height="128" />
+  <img src="docs/assets/logo.png" alt="switchAir" width="128" height="128" />
 </p>
 
-<h1 align="center">Antigravity Manager</h1>
+<h1 align="center">switchAir</h1>
 
 <p align="center">
   <strong>🚀 Professional multi-account manager for Google Gemini & Claude AI</strong>
@@ -13,23 +13,23 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Draculabo/AntigravityManager/actions/workflows/testing.yaml">
-    <img src="https://github.com/Draculabo/AntigravityManager/actions/workflows/testing.yaml/badge.svg" alt="Tests" />
+  <a href="https://github.com/Noelithub77/switchAir/actions/workflows/testing.yaml">
+    <img src="https://github.com/Noelithub77/switchAir/actions/workflows/testing.yaml/badge.svg" alt="Tests" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/actions/workflows/lint.yaml">
-    <img src="https://github.com/Draculabo/AntigravityManager/actions/workflows/lint.yaml/badge.svg" alt="Lint" />
+  <a href="https://github.com/Noelithub77/switchAir/actions/workflows/lint.yaml">
+    <img src="https://github.com/Noelithub77/switchAir/actions/workflows/lint.yaml/badge.svg" alt="Lint" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/releases">
-    <img src="https://img.shields.io/github/v/release/Draculabo/AntigravityManager?style=flat-square" alt="Release" />
+  <a href="https://github.com/Noelithub77/switchAir/releases">
+    <img src="https://img.shields.io/github/v/release/Noelithub77/switchAir?style=flat-square" alt="Release" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/releases">
-    <img src="https://img.shields.io/github/downloads/Draculabo/AntigravityManager/total?style=flat-square&color=blue" alt="Downloads" />
+  <a href="https://github.com/Noelithub77/switchAir/releases">
+    <img src="https://img.shields.io/github/downloads/Noelithub77/switchAir/total?style=flat-square&color=blue" alt="Downloads" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Draculabo/AntigravityManager?style=flat-square" alt="License" />
+  <a href="https://github.com/Noelithub77/switchAir/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/Noelithub77/switchAir?style=flat-square" alt="License" />
   </a>
-  <a href="https://github.com/Draculabo/AntigravityManager/stargazers">
-    <img src="https://img.shields.io/github/stars/Draculabo/AntigravityManager?style=flat-square" alt="Stars" />
+  <a href="https://github.com/Noelithub77/switchAir/stargazers">
+    <img src="https://img.shields.io/github/stars/Noelithub77/switchAir?style=flat-square" alt="Stars" />
   </a>
 </p>
 
@@ -44,7 +44,7 @@
 
 ## 📖 Table of Contents
 
-- [Why Antigravity Manager?](#-why-antigravity-manager)
+- [Why switchAir?](#-why-switchair)
 - [Features](#-features)
 - [Screenshots](#-screenshots)
 - [Quick Start](#-quick-start)
@@ -56,7 +56,7 @@
 
 ---
 
-## ✨ Why Antigravity Manager?
+## ✨ Why switchAir?
 
 When using Antigravity IDE, have you ever encountered these problems?
 
@@ -66,7 +66,7 @@ When using Antigravity IDE, have you ever encountered these problems?
 - ⏰ Worried about missing quota reset times
 - 🔌 Need a reliable local API proxy for development tools
 
-**Antigravity Manager** is here to solve these problems! It's a professional Electron desktop app that helps you:
+**switchAir** is here to solve these problems! It's a professional Electron desktop app that helps you:
 
 - ✅ **Unlimited Account Pool** - Add any number of Google Gemini / Claude accounts
 - ✅ **Smart Auto-Switching** - Automatically switch to the next available account when quota is low or rate-limited
@@ -181,13 +181,13 @@ When using Antigravity IDE, have you ever encountered these problems?
 
 ### Download
 
-Download the latest release for your platform from the [Releases](https://github.com/Draculabo/AntigravityManager/releases) page.
+Download the latest release for your platform from the [Releases](https://github.com/Noelithub77/switchAir/releases) page.
 
 | Platform | Download |
 |----------|----------|
-| Windows (x64/ARM64) | [.exe installer](https://github.com/Draculabo/AntigravityManager/releases/latest) |
-| macOS | [.dmg installer](https://github.com/Draculabo/AntigravityManager/releases/latest) |
-| Linux | [.deb / .rpm](https://github.com/Draculabo/AntigravityManager/releases/latest) |
+| Windows (x64/ARM64) | [.exe installer](https://github.com/Noelithub77/switchAir/releases/latest) |
+| macOS | [.dmg installer](https://github.com/Noelithub77/switchAir/releases/latest) |
+| Linux | [.deb / .rpm](https://github.com/Noelithub77/switchAir/releases/latest) |
 
 ### Build from Source
 
@@ -200,8 +200,8 @@ Download the latest release for your platform from the [Releases](https://github
 
 ```bash
 # Clone the repository
-git clone https://github.com/Draculabo/AntigravityManager.git
-cd AntigravityManager
+git clone https://github.com/Noelithub77/switchAir.git
+cd switchAir
 
 # Install dependencies
 npm install
@@ -246,7 +246,7 @@ npm run make
 ### Project Structure
 
 ```
-AntigravityManager/
+switchAir/
 ├── src/
 │   ├── main.ts          # Electron main process
 │   ├── preload.ts       # Preload script
@@ -290,8 +290,8 @@ This is a **temporary workaround** for personal use:
 2. Run the following commands in Terminal (repeat after every update)
 
 ```plaintext
-sudo xattr -dr com.apple.quarantine "/Applications/Antigravity Manager 2.app"
-codesign --force --deep --sign - "/Applications/Antigravity Manager 2.app"
+sudo xattr -dr com.apple.quarantine "/Applications/switchAir 2.app"
+codesign --force --deep --sign - "/Applications/switchAir 2.app"
 ```
 
 Reopen the app and allow Keychain access if prompted.
@@ -301,7 +301,7 @@ Reopen the app and allow Keychain access if prompted.
 <details>
 <summary><b>Q: How to report issues or suggestions?</b></summary>
 
-Please submit issues or suggestions via [GitHub Issues](https://github.com/Draculabo/AntigravityManager/issues).
+Please submit issues or suggestions via [GitHub Issues](https://github.com/Noelithub77/switchAir/issues).
 
 </details>
 
@@ -309,11 +309,11 @@ Please submit issues or suggestions via [GitHub Issues](https://github.com/Dracu
 
 ## 🌟 Star History
 
-<a href="https://github.com/Draculabo/AntigravityManager/stargazers">
+<a href="https://github.com/Noelithub77/switchAir/stargazers">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Draculabo/AntigravityManager&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Draculabo/AntigravityManager&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Draculabo/AntigravityManager&type=Date" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Noelithub77/switchAir&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Noelithub77/switchAir&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Noelithub77/switchAir&type=Date" />
   </picture>
 </a>
 
