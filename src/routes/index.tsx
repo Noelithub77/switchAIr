@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { CloudAccountList } from '@/components/CloudAccountList';
+import { AccountSourceTabs } from '@/components/accounts/AccountSourceTabs';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { getLocalizedErrorMessage } from '@/utils/errorMessages';
@@ -9,8 +9,8 @@ import { useTranslation } from 'react-i18next';
 
 function HomePage() {
   return (
-    <div className="container mx-auto max-w-4xl p-6">
-      <CloudAccountList />
+    <div className="container mx-auto max-w-6xl p-6">
+      <AccountSourceTabs />
     </div>
   );
 }

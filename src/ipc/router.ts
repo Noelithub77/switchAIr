@@ -6,6 +6,7 @@ import { accountRouter } from './account/router';
 import { cloudRouter } from './cloud/router';
 import { configRouter } from './config/router';
 import { gatewayRouter } from './gateway/router';
+import { opencodeRouter } from './opencode/router';
 
 import { os } from '@orpc/server';
 import { z } from 'zod';
@@ -51,6 +52,7 @@ export const router = os.use(logMiddleware).router({
 
   account: accountRouter,
   cloud: cloudRouter,
+  opencode: opencodeRouter,
   config: configRouter,
   gateway: gatewayRouter,
   system: systemHandler,

@@ -1,7 +1,13 @@
 import { z } from 'zod';
 import { os } from '@orpc/server';
 import { backupAccount, restoreAccount, getCurrentAccountInfo } from './handler';
-import { AccountBackupDataSchema, AccountInfoSchema, AccountSchema } from '../../types/account';
+import {
+  AccountBackupDataSchema,
+  AccountInfoSchema,
+  AccountSchema,
+  AntigravityImportExportResultSchema,
+} from '../../types/account';
+import { AntigravityImportExportService } from '@/services/AntigravityImportExport.service';
 
 export const databaseRouter = os.router({
   backupAccount: os
@@ -20,5 +26,15 @@ export const databaseRouter = os.router({
 
   getCurrentAccountInfo: os.output(AccountInfoSchema).handler(async () => {
     return getCurrentAccountInfo();
+  }),
+
+  exportCurrentAccountBundle: os
+    .output(AntigravityImportExportResultSchema)
+    .handler(async () => {
+      return AntigravityImportExportService.exportBundle();
+    }),
+
+  importAccountBundle: os.output(AntigravityImportExportResultSchema).handler(async () => {
+    return AntigravityImportExportService.importBundle();
   }),
 });

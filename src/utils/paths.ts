@@ -97,6 +97,25 @@ export function getAgentDir(): string {
   return path.join(os.homedir(), '.antigravity-agent');
 }
 
+export function getOpencodeDataDir(): string {
+  const home = os.homedir();
+
+  if (process.platform === 'win32') {
+    const userProfile = process.env.USERPROFILE || home;
+    return path.join(userProfile, '.local', 'share', 'opencode');
+  }
+
+  return path.join(home, '.local', 'share', 'opencode');
+}
+
+export function getOpencodeAuthFilePath(): string {
+  return path.join(getOpencodeDataDir(), 'auth.json');
+}
+
+export function getOpencodeSwitchAirFilePath(): string {
+  return path.join(getOpencodeDataDir(), 'switchAIr.jsonc');
+}
+
 export function getAccountsFilePath(): string {
   return path.join(getAgentDir(), 'antigravity_accounts.json');
 }

@@ -52,6 +52,18 @@ export interface AccountInfo {
   isAuthenticated: boolean;
 }
 
+export interface AntigravityExportBundle {
+  kind: 'switchair-antigravity';
+  version: string;
+  exportedAt: string;
+  backup: AccountBackupData;
+}
+
+export interface AntigravityImportExportResult {
+  canceled: boolean;
+  filePath: string | null;
+}
+
 // Zod Schemas for validation
 
 export const DeviceProfileSchema = z.object({
@@ -98,4 +110,16 @@ export const AccountInfoSchema = z.object({
   email: z.string(), // Allow empty string for unauthenticated state
   name: z.string().optional(),
   isAuthenticated: z.boolean(),
+});
+
+export const AntigravityExportBundleSchema = z.object({
+  kind: z.literal('switchair-antigravity'),
+  version: z.string(),
+  exportedAt: z.string(),
+  backup: AccountBackupDataSchema,
+});
+
+export const AntigravityImportExportResultSchema = z.object({
+  canceled: z.boolean(),
+  filePath: z.string().nullable(),
 });

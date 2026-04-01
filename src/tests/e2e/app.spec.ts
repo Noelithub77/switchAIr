@@ -84,6 +84,8 @@ test.describe('Antigravity Manager', () => {
 
     await expect(window.getByRole('main')).toBeVisible();
     await expect(window.locator('a[href="/settings"]').first()).toBeVisible();
+    await expect(window.getByTestId('account-source-antigravity')).toBeVisible();
+    await expect(window.getByTestId('account-source-opencode')).toBeVisible();
   });
 
   test('should navigate to settings', async () => {
@@ -113,6 +115,29 @@ test.describe('Antigravity Manager', () => {
       timeout: 15000,
     });
     await expect(mainContent.getByTestId('cloud-load-error-retry')).toBeVisible();
+  });
+
+  test('should restore the previously selected account source tab', async () => {
+    const window = await electronApp.firstWindow();
+    await window.waitForLoadState('domcontentloaded');
+
+    await window.evaluate(() => {
+      localStorage.setItem(
+        'account-source-store',
+        JSON.stringify({
+          state: { selectedSource: 'opencode' },
+          version: 0,
+        }),
+      );
+    });
+
+    await window.reload();
+    await window.waitForLoadState('domcontentloaded');
+
+    await expect(window.getByTestId('account-source-opencode')).toHaveAttribute(
+      'data-state',
+      'active',
+    );
   });
 
   // More detailed tests would require mocking IPC or having a real environment

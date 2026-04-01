@@ -4,6 +4,9 @@ import {
   getAntigravityDbPath,
   getAntigravityStoragePath,
   getAntigravityExecutablePath,
+  getOpencodeAuthFilePath,
+  getOpencodeDataDir,
+  getOpencodeSwitchAirFilePath,
 } from '../../utils/paths';
 
 describe('Path Utilities', () => {
@@ -31,5 +34,18 @@ describe('Path Utilities', () => {
       expect(execPath).toBe('/Applications/Antigravity.app/Contents/MacOS/Antigravity');
     }
     // Windows path depends on env vars, harder to test strictly without mocking
+  });
+
+  it('should resolve the OpenCode data directory', () => {
+    const dataDir = getOpencodeDataDir();
+    expect(dataDir).toContain('opencode');
+  });
+
+  it('should resolve the OpenCode auth file path', () => {
+    expect(getOpencodeAuthFilePath()).toContain('auth.json');
+  });
+
+  it('should resolve the OpenCode switchAIr inventory path', () => {
+    expect(getOpencodeSwitchAirFilePath()).toContain('switchAIr.jsonc');
   });
 });
